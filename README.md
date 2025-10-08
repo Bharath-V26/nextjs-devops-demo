@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js DevOps Demo
 
-## Getting Started
+This project demonstrates containerizing a Next.js application, pushing it to GitHub Container Registry (GHCR) using GitHub Actions, and deploying it to Kubernetes using Minikube.
 
-First, run the development server:
+---
 
-```bash
+## Setup Instructions
+
+1. Clone the repository:
+git clone https://github.com/Bharath-V26/nextjs-devops-demo.git
+cd nextjs-devops-demo
+
+2. Install dependencies:
+npm install
+
+Run Locally
+
+3. Start the Next.js application:
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will run on: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4.Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build and run the application using Docker:
 
-## Learn More
+> Build Docker image:
+docker build -t nextjs-devops-demo .
+ 
+> Run Docker container:
+docker run -d -p 3000:3000 nextjs-devops-demo
 
-To learn more about Next.js, take a look at the following resources:
+The application will be accessible at http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+GitHub Actions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project uses GitHub Actions to automate Docker image build and push:
 
-## Deploy on Vercel
+Workflow file: .github/workflows/docker-build.yml
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+On push to the main branch:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Builds the Docker image
+
+Tags the image as latest
+
+Pushes the image to GitHub Container Registry (GHCR)
+
+GHCR image URL:
+ghcr.io/bharath-v26/nextjs-devops-demo:latest
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Kubernetes Deployment (Minikube)
+
+Kubernetes manifests are located in the k8s/ folder.
+
+1. Start Minikube:
+minikube start
+
+2. Apply Kubernetes manifests:
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/deployment.yaml
+
+3. Restart deployment (if required):
+kubectl rollout restart deployment nextjs-deployment
+
+4. Access the application using the Minikube service:
+minikube service nextjs-service
+
+This will open the Next.js application in your default browser.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Folder Structure
+
+nextjs-devops-demo/
+├─ app/                     # Next.js application
+├─ k8s/                     # Kubernetes manifests
+│  ├─ deployment.yaml
+│  └─ service.yaml
+├─ .github/workflows/       # GitHub Actions workflows
+│  └─ docker-build.yml
+├─ Dockerfile               # Dockerfile for containerization
+├─ package.json
+└─ README.md
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Technologies Used
+
+Next.js (React framework)
+
+Docker (Containerization)
+
+GitHub Actions (CI/CD)
+
+GitHub Container Registry (Image storage)
+
+Kubernetes & Minikube (Local deployment)
